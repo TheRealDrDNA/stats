@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Volleyball Stats</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: white;
+            color: black;
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+            margin: 0;
+            user-select: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid black;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .label {
+            flex: 1;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0 10px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 44px; /* Slightly larger for easier tapping on iPhone */
+            height: 44px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            background-color: #444;
+        }
+
+        .count {
+            font-size: 1.5rem;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .reset-container {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .reset-btn {
+            padding: 10px 30px;
+            background-color: white;
+            border: 1px solid black;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="label">Service</div>
+        <div class="controls">
+            <button class="btn" onclick="update('service', -1)">-</button>
+            <span class="count" id="service">0</span>
+            <button class="btn" onclick="update('service', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Flubs</div>
+        <div class="controls">
+            <button class="btn" onclick="update('flubs', -1)">-</button>
+            <span class="count" id="flubs">0</span>
+            <button class="btn" onclick="update('flubs', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Successful Serve</div>
+        <div class="controls">
+            <button class="btn" onclick="update('successServe', -1)">-</button>
+            <span class="count" id="successServe">0</span>
+            <button class="btn" onclick="update('successServe', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Ace</div>
+        <div class="controls">
+            <button class="btn" onclick="updateAce(-1)">-</button>
+            <span class="count" id="ace">0</span>
+            <button class="btn" onclick="updateAce(1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Kill</div>
+        <div class="controls">
+            <button class="btn" onclick="updateKill(-1)">-</button>
+            <span class="count" id="kill">0</span>
+            <button class="btn" onclick="updateKill(1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Point</div>
+        <div class="controls">
+            <button class="btn" onclick="updatePoint(-1)">-</button>
+            <span class="count" id="point">0</span>
+            <button class="btn" onclick="updatePoint(1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Successful Touches</div>
+        <div class="controls">
+            <button class="btn" onclick="update('touch', -1)">-</button>
+            <span class="count" id="touch">0</span>
+            <button class="btn" onclick="update('touch', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Error</div>
+        <div class="controls">
+            <button class="btn" onclick="update('error', -1)">-</button>
+            <span class="count" id="error">0</span>
+            <button class="btn" onclick="update('error', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="reset-container">
+        <button class="reset-btn" onclick="resetStats()">Reset</button>
+    </div>
+</div>
+
+<script>
+    let stats = {
+        service: 0,
+        flubs: 0,
+        successServe: 0,
+        ace: 0,
+        kill: 0,
+        point: 0,
+        touch: 0,
+        error: 0
+    };
+
+    function update(key, val) {
+        stats[key] = Math.max(0, stats[key] + val);
+        render();
+    }
+
+    // UPDATED: Ace only links to Successful Serve
+    function updateAce(val) {
+        stats.ace = Math.max(0, stats.ace + val);
+        stats.successServe = Math.max(0, stats.successServe + val);
+        render();
+    }
+
+    function updatePoint(val) {
+        stats.point = Math.max(0, stats.point + val);
+        stats.touch = Math.max(0, stats.touch + val);
+        render();
+    }
+
+    function updateKill(val) {
+        stats.kill = Math.max(0, stats.kill + val);
+        stats.point = Math.max(0, stats.point + val);
+        stats.touch = Math.max(0, stats.touch + val);
+        render();
+    }
+
+    function render() {
+        for (let key in stats) {
+            document.getElementById(key).innerText = stats[key];
+        }
+    }
+
+    function resetStats() {
+        if(confirm("Clear all stats?")) {
+            for (let key in stats) stats[key] = 0;
+            render();
+        }
+    }
+</script>
+
+</body>
+</html>
