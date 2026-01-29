@@ -3,213 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Volleyball Stats</title>
+    <title>Volleyball Score Tracker</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: white;
-            color: black;
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --btn-bg: #f2f2f2;
+        }
+
+        body, html {
             margin: 0;
-            user-select: none;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
         .container {
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid black;
-        }
-
-        .row {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 10px;
-            border-bottom: 1px solid #ddd;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        .label {
+        .half {
             flex: 1;
-            font-size: 1.1rem;
-            font-weight: 500;
-            padding: 0 10px;
-        }
-
-        .controls {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
+            position: relative;
         }
 
-        .btn {
-            width: 44px; /* Slightly larger for easier tapping on iPhone */
-            height: 44px;
-            background-color: black;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1.5rem;
+        .top-half {
+            border-bottom: 2px solid var(--text-color);
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .score {
+            font-size: 9rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 5px 0;
+        }
+
+        /* Team Specific Controls */
+        .team-controls {
+            display: flex;
+            gap: 40px;
+            margin-top: 10px;
+        }
+
+        .btn-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--text-color);
+            background: var(--bg-color);
+            font-size: 2rem;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             touch-action: manipulation;
         }
 
-        .btn:active {
-            background-color: #444;
+        .btn-circle:active {
+            background-color: var(--text-color);
+            color: white;
         }
 
-        .count {
-            font-size: 1.5rem;
-            min-width: 35px;
-            text-align: center;
-        }
-
-        .reset-container {
-            padding: 20px;
+        /* Bottom Reset Bar */
+        .bottom-bar {
+            height: 80px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            padding-bottom: 20px; /* Safe area for iPhone home bar */
+            background: #fafafa;
         }
 
         .reset-btn {
-            padding: 10px 30px;
-            background-color: white;
-            border: 1px solid black;
-            font-size: 1.1rem;
-            cursor: pointer;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            background: white;
+            font-size: 1.2rem;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="row">
-        <div class="label">Service</div>
-        <div class="controls">
-            <button class="btn" onclick="update('service', -1)">-</button>
-            <span class="count" id="service">0</span>
-            <button class="btn" onclick="update('service', 1)">+</button>
+    <div class="half top-half">
+        <h2>KAI’S TEAM</h2>
+        <div class="score" id="scoreKai">0</div>
+        <div class="team-controls">
+            <button class="btn-circle" onclick="changeScore('kai', -1)">−</button>
+            <button class="btn-circle" onclick="changeScore('kai', 1)">+</button>
         </div>
     </div>
 
-    <div class="row">
-        <div class="label">Flubs</div>
-        <div class="controls">
-            <button class="btn" onclick="update('flubs', -1)">-</button>
-            <span class="count" id="flubs">0</span>
-            <button class="btn" onclick="update('flubs', 1)">+</button>
+    <div class="half">
+        <h2>OTHER TEAM</h2>
+        <div class="score" id="scoreOther">0</div>
+        <div class="team-controls">
+            <button class="btn-circle" onclick="changeScore('other', -1)">−</button>
+            <button class="btn-circle" onclick="changeScore('other', 1)">+</button>
         </div>
     </div>
 
-    <div class="row">
-        <div class="label">Successful Serve</div>
-        <div class="controls">
-            <button class="btn" onclick="update('successServe', -1)">-</button>
-            <span class="count" id="successServe">0</span>
-            <button class="btn" onclick="update('successServe', 1)">+</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="label">Ace</div>
-        <div class="controls">
-            <button class="btn" onclick="updateAce(-1)">-</button>
-            <span class="count" id="ace">0</span>
-            <button class="btn" onclick="updateAce(1)">+</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="label">Kill</div>
-        <div class="controls">
-            <button class="btn" onclick="updateKill(-1)">-</button>
-            <span class="count" id="kill">0</span>
-            <button class="btn" onclick="updateKill(1)">+</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="label">Point</div>
-        <div class="controls">
-            <button class="btn" onclick="updatePoint(-1)">-</button>
-            <span class="count" id="point">0</span>
-            <button class="btn" onclick="updatePoint(1)">+</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="label">Successful Touches</div>
-        <div class="controls">
-            <button class="btn" onclick="update('touch', -1)">-</button>
-            <span class="count" id="touch">0</span>
-            <button class="btn" onclick="update('touch', 1)">+</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="label">Error</div>
-        <div class="controls">
-            <button class="btn" onclick="update('error', -1)">-</button>
-            <span class="count" id="error">0</span>
-            <button class="btn" onclick="update('error', 1)">+</button>
-        </div>
-    </div>
-
-    <div class="reset-container">
-        <button class="reset-btn" onclick="resetStats()">Reset</button>
+    <div class="bottom-bar">
+        <button class="reset-btn" onclick="resetScores()">0</button>
     </div>
 </div>
 
 <script>
-    let stats = {
-        service: 0,
-        flubs: 0,
-        successServe: 0,
-        ace: 0,
-        kill: 0,
-        point: 0,
-        touch: 0,
-        error: 0
-    };
+    let scores = { kai: 0, other: 0 };
 
-    function update(key, val) {
-        stats[key] = Math.max(0, stats[key] + val);
-        render();
+    function changeScore(team, amount) {
+        scores[team] = Math.max(0, scores[team] + amount);
+        document.getElementById('score' + team.charAt(0).toUpperCase() + team.slice(1)).innerText = scores[team];
+        
+        // Brief haptic vibration feel for touch devices
+        if (window.navigator.vibrate) window.navigator.vibrate(10);
     }
 
-    // UPDATED: Ace only links to Successful Serve
-    function updateAce(val) {
-        stats.ace = Math.max(0, stats.ace + val);
-        stats.successServe = Math.max(0, stats.successServe + val);
-        render();
-    }
-
-    function updatePoint(val) {
-        stats.point = Math.max(0, stats.point + val);
-        stats.touch = Math.max(0, stats.touch + val);
-        render();
-    }
-
-    function updateKill(val) {
-        stats.kill = Math.max(0, stats.kill + val);
-        stats.point = Math.max(0, stats.point + val);
-        stats.touch = Math.max(0, stats.touch + val);
-        render();
-    }
-
-    function render() {
-        for (let key in stats) {
-            document.getElementById(key).innerText = stats[key];
-        }
-    }
-
-    function resetStats() {
-        if(confirm("Clear all stats?")) {
-            for (let key in stats) stats[key] = 0;
-            render();
+    function resetScores() {
+        if (confirm("Reset both scores?")) {
+            scores.kai = 0;
+            scores.other = 0;
+            document.getElementById('scoreKai').innerText = 0;
+            document.getElementById('scoreOther').innerText = 0;
         }
     }
 </script>
