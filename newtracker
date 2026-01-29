@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Volleyball Score Tracker</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --btn-bg: #f2f2f2;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .top-half {
+            border-bottom: 2px solid var(--text-color);
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .score {
+            font-size: 9rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 5px 0;
+        }
+
+        /* Team Specific Controls */
+        .team-controls {
+            display: flex;
+            gap: 40px;
+            margin-top: 10px;
+        }
+
+        .btn-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--text-color);
+            background: var(--bg-color);
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        .btn-circle:active {
+            background-color: var(--text-color);
+            color: white;
+        }
+
+        /* Bottom Reset Bar */
+        .bottom-bar {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 20px; /* Safe area for iPhone home bar */
+            background: #fafafa;
+        }
+
+        .reset-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            background: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="half top-half">
+        <h2>KAI’S TEAM</h2>
+        <div class="score" id="scoreKai">0</div>
+        <div class="team-controls">
+            <button class="btn-circle" onclick="changeScore('kai', -1)">−</button>
+            <button class="btn-circle" onclick="changeScore('kai', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="half">
+        <h2>OTHER TEAM</h2>
+        <div class="score" id="scoreOther">0</div>
+        <div class="team-controls">
+            <button class="btn-circle" onclick="changeScore('other', -1)">−</button>
+            <button class="btn-circle" onclick="changeScore('other', 1)">+</button>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <button class="reset-btn" onclick="resetScores()">0</button>
+    </div>
+</div>
+
+<script>
+    let scores = { kai: 0, other: 0 };
+
+    function changeScore(team, amount) {
+        scores[team] = Math.max(0, scores[team] + amount);
+        document.getElementById('score' + team.charAt(0).toUpperCase() + team.slice(1)).innerText = scores[team];
+        
+        // Brief haptic vibration feel for touch devices
+        if (window.navigator.vibrate) window.navigator.vibrate(10);
+    }
+
+    function resetScores() {
+        if (confirm("Reset both scores?")) {
+            scores.kai = 0;
+            scores.other = 0;
+            document.getElementById('scoreKai').innerText = 0;
+            document.getElementById('scoreOther').innerText = 0;
+        }
+    }
+</script>
+
+</body>
+</html>
